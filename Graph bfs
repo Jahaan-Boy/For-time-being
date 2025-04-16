@@ -1,0 +1,53 @@
+#include <iostream>
+#include <unordered_map>
+#include <list>
+#include <queue>
+#include <map>
+
+using namespace std;
+
+class Graph {
+public:
+    unordered_map<char, list<char>> adjList;
+
+    void addEdge(char u, char v) {
+        adjList[u].push_back(v);
+    }
+
+    void bfs(char start) {
+        map<char, bool> visited;
+        queue<char> q;
+
+        q.push(start);
+        visited[start] = true;
+
+        while (!q.empty()) {
+            char node = q.front();
+            q.pop();
+            cout << node << " ";
+
+            for (char neighbor : adjList[node]) {
+                if (!visited[neighbor]) {
+                    q.push(neighbor);
+                    visited[neighbor] = true;
+                }
+            }
+        }
+    }
+};
+
+int main() {
+    Graph g;
+    g.addEdge('A', 'B');
+    g.addEdge('A', 'C');
+    g.addEdge('B', 'D');
+    g.addEdge('B', 'E');
+    g.addEdge('C', 'F');
+    g.addEdge('E', 'F');
+
+    cout << "BFS starting from node A: ";
+    g.bfs('A');
+    cout << endl;
+
+    return 0;
+}
