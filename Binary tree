@@ -1,0 +1,131 @@
+#include <bits/stdc++.h>
+using namespace std;
+int n=INT_MIN;
+class Node{
+    public:
+    int val;
+    Node *left;
+    Node *right;
+    Node(int val){
+    this->val=val;
+    left=right=NULL;
+    }
+};
+
+void display(Node *root){
+    if(root==NULL) return;
+    cout<<root->val<<" ";
+    display(root->left);
+    display(root->right);
+}
+int sum(Node *root){
+    if(root==NULL) return 0;
+    return root->val+sum(root->left)+sum(root->right);
+}
+int product(Node *root){
+    if(root==NULL) return 1;
+    return root->val*product(root->left)*product(root->right);
+}
+int max(Node *root){
+    if(root==NULL) return INT_MIN;
+    int lmax=max(root->left);
+    int rmax=max(root->right);
+    return max(root->val,max(lmax,rmax));
+}
+int size(Node *root){
+    if(root==NULL) return 1;
+    return 1+size(root->left)+size(root->right);
+}
+int level(Node *root){
+    if(root==NULL) return 0;
+    return 1+max(level(root->left),level(root->right));
+}
+
+void levelorder(Node* root,int curr,int level){
+    if(root==NULL) return;
+    if(curr==level) {
+        cout<<root->val<<" ";
+        return;
+    }
+    levelorder(root->left,curr+1,level);
+    levelorder(root->right,curr+1,level);
+}
+void lorder(Node* root){
+    int n=level(root);
+    for(int i=1;i<=n;i++){
+        levelorder(root,1,i);
+        cout<<endl;
+    }
+}
+void bfs(Node* root){
+    queue<Node*>q;
+    q.push(root);
+    while(q.size()>0){
+        Node* temp=q.front();
+        q.pop();
+        cout<<temp->val<<" ";
+        if(temp->left!=NULL) q.push(temp->left);
+        if(temp->right!=NULL) q.push(temp->right);
+    }
+}
+Node* construct(vector<int>&v){
+    int k=v.size();
+    queue<Node*>q;
+    Node* root=new Node(v[0]);
+    int i=1,j=2;
+    q.push(root);
+    while(q.size()>0 && i<k){
+        Node* temp=q.front();
+        q.pop();
+        Node* l;
+        Node* r;
+        if(v[i]!=n) l=new Node(v[i]);
+        else l=NULL;
+        if(v[j]!=n && j!=k) r=new Node(v[j]);
+        else r=NULL;
+        temp->left=l;
+        temp->right=r;
+        if(l!=NULL) q.push(l);
+        if(r!=NULL) q.push(r);
+        i+=2;
+        j+=2;
+    }
+    return root;
+}
+void leftboundary(Node* root){
+    if(root==NULL) return;
+    if(root->left==NULL && root->right==NULL) return;
+    cout<<root->val<<" ";
+    leftboundary(root->left);
+    if(root->left==NULL) leftboundary(root->right);
+}
+void leafnodes(Node* root){
+    if(root==NULL) return;
+    if(root->left==NULL && root->right==NULL) {
+            cout<<root->val<<" ";
+            return;
+    }
+    leafnodes(root->left);
+    leafnodes(root->right);
+}
+void rightboundary(Node* root){
+    if(root==NULL) return;
+    if(root->left==NULL && root->right==NULL) return;
+    rightboundary(root->right);
+    if(root->right==NULL) rightboundary(root->left);
+    cout<<root->val<<" ";
+}
+void boundary(Node* root){
+    leftboundary(root);
+    leafnodes(root);
+    rightboundary(root->right);
+}
+int main() {
+    int k;
+    cin>>k;
+    vector<int>v(k);
+    for(int i=0;i<k;i++) cin>>v[i];
+    Node* root=construct(v);
+    boundary(root);
+    return 0;
+}
